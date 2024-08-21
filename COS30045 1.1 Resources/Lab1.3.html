@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation Exercise 1" />
+    <meta name="keywords" content="HTML, CSS, SVG, Graph" />
+    <meta name="author" content="Ivan" />
+
+    <title>SVG Bar Chart Example</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .chart-title {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        svg {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .bar {
+            fill: #0056b3;
+            transition: fill 0.3s;
+        }
+
+        .bar:hover {
+            fill: #003f7f;
+        }
+
+        text {
+            font-size: 14px;
+            fill: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div>
+        <h2 class="chart-title">Pet Ownership in Australia (2019 vs 2021)</h2>
+        <svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+            <!-- X and Y axis -->
+            <line x1="50" y1="250" x2="450" y2="250" stroke="black" />
+            <line x1="50" y1="250" x2="50" y2="50" stroke="black" />
+
+            <!-- Bars representing data -->
+            <!-- 2019 data -->
+            <rect class="bar" x="80" y="150" width="50" height="100" />
+            <rect class="bar" x="160" y="100" width="50" height="150" />
+            <rect class="bar" x="240" y="180" width="50" height="70" />
+
+            <!-- 2021 data -->
+            <rect class="bar" x="110" y="120" width="50" height="130" fill="#4caf50" />
+            <rect class="bar" x="190" y="70" width="50" height="180" fill="#4caf50" />
+            <rect class="bar" x="270" y="140" width="50" height="110" fill="#4caf50" />
+
+            <!-- Labels for the bars -->
+            <text x="90" y="270">Dogs</text>
+            <text x="170" y="270">Fish</text>
+            <text x="250" y="270">Birds</text>
+
+            <!-- Labels for years -->
+            <text x="70" y="280">2019</text>
+            <text x="100" y="280">2021</text>
+            <text x="150" y="280">2019</text>
+            <text x="180" y="280">2021</text>
+            <text x="230" y="280">2019</text>
+            <text x="260" y="280">2021</text>
+
+            <!-- Y-axis labels -->
+            <text x="20" y="250">0</text>
+            <text x="20" y="200">20</text>
+            <text x="20" y="150">40</text>
+            <text x="20" y="100">60</text>
+            <text x="20" y="50">80</text>
+        </svg>
+    </div>
+
+</body>
+
+</html>
