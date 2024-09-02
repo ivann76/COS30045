@@ -16,7 +16,7 @@
 
     <h1>The D3 Journey starts here...</h1>
 
-    <svg></svg>
+    <svg width="600" height="400"></svg>
     <script>
         var dataset = [
                         [5, 201],
@@ -32,10 +32,10 @@
                     ];
 
         svg.selectAll("circle")
-            .data (dataset)
+            .data(dataset)
             .enter()
             .append("circle")
-            .attr("cx", function(d, i) {
+            .attr("cx", function(d) {
                 return d[0];
             })
             .attr("cy", function(d) {
