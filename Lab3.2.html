@@ -10,115 +10,203 @@
     <title>Task 3.2 D3 Adding Axis to your Charts</title>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        /* General reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* Breadcrumb style */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+      
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 3px;
+        }
+
+        .breadcrumb span {
+            color: #6c757d;
+        }
+
+        .breadcrumb-separator {
+            color: #6c757d;
+        }
+
+        /* Container and link styling */
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Footer styling */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>The D3 Journey starts here...</h1>
-    <p>The following is a modified version of the original Lab3-2 with axis labels.</p>
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab1.1.html">Lab 1.1</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab1.2.html">Lab 1.2</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab2.1.html">Lab 2.1</a>
+        <span class="breadcrumb-separator">›</span>
+        <span>Lab 3.2</span>
+    </nav>
 
-    <!-- Define the SVG canvas -->
-    <svg width="600" height="400"></svg>
+    <!-- Main content container -->
+    <div class="container">
+        <h1>The D3 Journey starts here...</h1>
+        <p>The following is a modified version of the original Lab3-2 with axis labels.</p>
 
-    <script>
-        // Define the dataset
-        var dataset = [
-            [2, 8],
-            [3, 5],
-            [5, 17],
-            [6, 6],
-            [6, 12],
-            [7, 20],
-            [8, 22],
-            [10, 11],
-            [5, 12],
-            [6, 16]
-        ];
+        <!-- Define the SVG canvas -->
+        <svg width="600" height="400"></svg>
 
-        // Set canvas dimensions and padding
-        var svgWidth = 600;
-        var svgHeight = 400;
-        var padding = 40;
+        <script>
+            // Define the dataset
+            var dataset = [
+                [2, 8],
+                [3, 5],
+                [5, 17],
+                [6, 6],
+                [6, 12],
+                [7, 20],
+                [8, 22],
+                [10, 11],
+                [5, 12],
+                [6, 16]
+            ];
 
-        // Create scales for x and y
-        var xScale = d3.scaleLinear()
-            .domain([0, d3.max(dataset, function(d) { return d[0]; })])
-            .range([padding, svgWidth - padding]);
+            // Set canvas dimensions and padding
+            var svgWidth = 600;
+            var svgHeight = 400;
+            var padding = 40;
 
-        var yScale = d3.scaleLinear()
-            .domain([0, d3.max(dataset, function(d) { return d[1]; })])
-            .range([svgHeight - padding, padding]); // Reversed so low values are at the bottom
+            // Create scales for x and y
+            var xScale = d3.scaleLinear()
+                .domain([0, d3.max(dataset, function(d) { return d[0]; })])
+                .range([padding, svgWidth - padding]);
 
-        // Select the SVG element
-        var svg = d3.select("svg");
+            var yScale = d3.scaleLinear()
+                .domain([0, d3.max(dataset, function(d) { return d[1]; })])
+                .range([svgHeight - padding, padding]); // Reversed so low values are at the bottom
 
-        // Create circles for each data point
-        svg.selectAll("circle")
-            .data(dataset)
-            .enter()
-            .append("circle")
-            .attr("cx", function(d) {
-                return xScale(d[0]); // Apply xScale for the X coordinate
-            })
-            .attr("cy", function(d) {
-                return yScale(d[1]); // Apply yScale for the Y coordinate
-            })
-            .attr("r", 5)
-            .attr("fill", "slategrey");
+            // Select the SVG element
+            var svg = d3.select("svg");
 
-        // Add text labels for each data point
-        svg.selectAll("text")
-            .data(dataset)
-            .enter()
-            .append("text")
-            .attr("x", function(d) {
-                return xScale(d[0]) + 10; // Position text slightly to the right
-            })
-            .attr("y", function(d) {
-                return yScale(d[1]);
-            })
-            .text(function(d) {
-                return d[0] + "," + d[1];
-            })
-            .attr("font-family", "Arial")
-            .attr("font-size", "12px")
-            .attr("fill", "green");
+            // Create circles for each data point
+            svg.selectAll("circle")
+                .data(dataset)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                    return xScale(d[0]); // Apply xScale for the X coordinate
+                })
+                .attr("cy", function(d) {
+                    return yScale(d[1]); // Apply yScale for the Y coordinate
+                })
+                .attr("r", 5)
+                .attr("fill", "slategrey");
 
-        // Create the x-axis
-        var xAxis = d3.axisBottom(xScale);
-        svg.append("g")
-            .attr("transform", "translate(0," + (svgHeight - padding) + ")")
-            .call(xAxis);
+            // Add text labels for each data point
+            svg.selectAll("text")
+                .data(dataset)
+                .enter()
+                .append("text")
+                .attr("x", function(d) {
+                    return xScale(d[0]) + 10; // Position text slightly to the right
+                })
+                .attr("y", function(d) {
+                    return yScale(d[1]);
+                })
+                .text(function(d) {
+                    return d[0] + "," + d[1];
+                })
+                .attr("font-family", "Arial")
+                .attr("font-size", "12px")
+                .attr("fill", "green");
 
-        // Create the y-axis
-        var yAxis = d3.axisLeft(yScale);
-        svg.append("g")
-            .attr("transform", "translate(" + padding + ",0)")
-            .call(yAxis);
+            // Create the x-axis
+            var xAxis = d3.axisBottom(xScale);
+            svg.append("g")
+                .attr("transform", "translate(0," + (svgHeight - padding) + ")")
+                .call(xAxis);
 
-        // Add X-axis label
-        svg.append("text")
-            .attr("x", svgWidth / 2)
-            .attr("y", svgHeight - 10)
-            .attr("text-anchor", "middle")
-            .attr("font-size", "14px")
-            .attr("fill", "black")
-            .text("Tree Age (year)");
+            // Create the y-axis
+            var yAxis = d3.axisLeft(yScale);
+            svg.append("g")
+                .attr("transform", "translate(" + padding + ",0)")
+                .call(yAxis);
 
-        // Add Y-axis label
-        svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("x", -svgHeight / 2)
-            .attr("y", 15)
-            .attr("text-anchor", "middle")
-            .attr("font-size", "14px")
-            .attr("fill", "black")
-            .text("Tree Height (m)");
+            // Add X-axis label
+            svg.append("text")
+                .attr("x", svgWidth / 2)
+                .attr("y", svgHeight - 10)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "14px")
+                .attr("fill", "black")
+                .text("Tree Age (year)");
 
-    </script>
+            // Add Y-axis label
+            svg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -svgHeight / 2)
+                .attr("y", 15)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "14px")
+                .attr("fill", "black")
+                .text("Tree Height (m)");
 
-    <footer style="color:grey">COS30045 Data Visualisation<br>
-        Joe Bloggs
+        </script>
+    </div>
+
+    <footer style="color:grey">
+        COS30045 Data Visualisation<br> Joe Bloggs
     </footer>
 
 </body>
