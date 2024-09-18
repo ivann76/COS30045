@@ -7,7 +7,7 @@
     <meta name="keywords" content="HTML, CSS, D3" />
     <meta name="author" content="Ivan" />
 
-    <title>Task 2.2 D3 Data Binding</title>
+    <title>Task 5.1 D3 Updates</title>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
@@ -29,6 +29,11 @@
         // Updated dataset to match the screenshot
         var dataset = [14, 18, 10, 6, 13, 5, 8, 20, 16, 9]; 
 
+        var xScale = d3.scaleBand()
+                        .domain(d3.range(dataset.length))
+                        .range([0,w])
+                        .paddingInner(0.05);
+                        
         // Create a scaling function to map the dataset values to the available SVG height
         var yScale = d3.scaleLinear()
                        .domain([0, d3.max(dataset)])  // Input range
