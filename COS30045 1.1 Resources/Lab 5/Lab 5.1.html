@@ -31,13 +31,13 @@
 
         var xScale = d3.scaleBand()
                         .domain(d3.range(dataset.length))
-                        .range([0,w])
+                        .rangeRound([0,w])
                         .paddingInner(0.05);
-                        
+
         // Create a scaling function to map the dataset values to the available SVG height
         var yScale = d3.scaleLinear()
                        .domain([0, d3.max(dataset)])  // Input range
-                       .range([0, h]);  // Output range
+                       .rangeRound([0, h]); // Output range
 
         // Create the SVG element
         var svg = d3.select("body")
