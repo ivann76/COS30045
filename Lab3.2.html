@@ -15,23 +15,24 @@
 <body>
 
     <h1>The D3 Journey starts here...</h1>
+    <p>The following is a modified version of the original Lab3-2 with axis labels.</p>
 
     <!-- Define the SVG canvas -->
     <svg width="600" height="400"></svg>
 
     <script>
-        // Define dataset
+        // Define the modified dataset (as per the image)
         var dataset = [
-            [5, 201],
-            [480, 90],
-            [250, 50],
-            [100, 33],
-            [330, 95],
-            [410, 12],
-            [475, 44],
-            [25, 67],
-            [85, 21],
-            [220, 88]
+            [2, 8],
+            [3, 5],
+            [5, 17],
+            [6, 6],
+            [6, 12],
+            [7, 20],
+            [8, 22],
+            [10, 11],
+            [5, 12],
+            [6, 16]
         ];
 
         // Set canvas dimensions and padding
@@ -82,6 +83,38 @@
             .attr("font-family", "Arial")
             .attr("font-size", "12px")
             .attr("fill", "green");
+
+        // Create the x-axis
+        var xAxis = d3.axisBottom(xScale);
+        svg.append("g")
+            .attr("transform", "translate(0," + (svgHeight - padding) + ")")
+            .call(xAxis);
+
+        // Create the y-axis
+        var yAxis = d3.axisLeft(yScale);
+        svg.append("g")
+            .attr("transform", "translate(" + padding + ",0)")
+            .call(yAxis);
+
+        // Add X-axis label
+        svg.append("text")
+            .attr("x", svgWidth / 2)
+            .attr("y", svgHeight - 10)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "14px")
+            .attr("fill", "black")
+            .text("Tree Age (year)");
+
+        // Add Y-axis label
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -svgHeight / 2)
+            .attr("y", 15)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "14px")
+            .attr("fill", "black")
+            .text("Tree Height (m)");
+
     </script>
 
     <footer style="color:grey">COS30045 Data Visualisation<br>
