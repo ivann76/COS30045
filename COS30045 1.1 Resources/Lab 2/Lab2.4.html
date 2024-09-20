@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation" />
+    <meta name="keywords" content="HTML, CSS, D3" />
+    <meta name="author" content="Ivan" />
+
+    <title>Task 2.4 D3 Data Binding</title>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Drawing with Data</h1>
+
+    <div id="chart"></div>
+    
+    <script>
+        var w = 500;  // Width of the SVG element
+        var h = 300;  // Height of the SVG element
+        var barPadding = 5;
+
+        // Create the SVG element within the chart div
+        var svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+        // Load the CSV data and create the bar chart
+        d3.csv("Task_2.4_data.csv").then(function(data) {
+            console.log(data);
+
+            // Parse data
+            data.forEach(function(d) {
+                d.wombats = +d.wombats; // Ensure the data is a number
+            });
+
+            // Create a scaling function to map the dataset values to the available SVG height
+            var yScale = d3.scaleLinear()
+                           .domain([0, d3.max(data, function(d) { return d.wombats; })])  // Input range
+                           .range([0, h]);  // Output range
+
+            // Create the bars
+            svg.selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", function(d, i) {
+                    return i * (w / data.length);  // Calculate the x position of each bar
+                })
+                .attr("y", function(d) {
+                    return h - yScale(d.wombats);  // Calculate the y position of each bar, adjusting for height
+                })
+                .attr("width", w / data.length - barPadding)  // Width of each bar
+                .attr("height", function(d) {
+                    return yScale(d.wombats);  // Height of each bar based on the scaled value
+                })
+                .attr("fill", "steelblue");
+
+            // Add numbers above the bars
+            svg.selectAll("text")
+                .data(data)
+                .enter()
+                .append("text")
+                .text(function(d) {
+                    return d.wombats;  // The number to display (dataset value)
+                })
+                .attr("x", function(d, i) {
+                    return i * (w / data.length) + (w / data.length - barPadding) / 2;  // Center the text
+                })
+                .attr("y", function(d) {
+                    return h - yScale(d.wombats) - 5;  // Position the text above the bar with a little padding
+                })
+                .attr("text-anchor", "middle")  // Center the text horizontally
+                .attr("fill", "black")  // Set text color
+                .style("font-size", "12px");  // Set font size
+        });
+
+        // Footer style
+        d3.select("body")
+            .append("footer")
+            .style("color", "grey")
+            .html("COS30045 Data Visualisation<br>Joe Bloggs");
+    </script>
+
+</body>
+
+</html>
