@@ -14,71 +14,102 @@
         body {
             font-family: Arial, sans-serif;
         }
+        .axis {
+            font: 10px sans-serif;
+        }
+
+        .button{
+            padding: 20px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="button">
+        <h1>The D3 Journey starts here...</h1>
+        <button id="update">Update Data</button>
+    </div>
 
-    <h1>The D3 Journey starts here...</h1>
+    <div>
+        <svg id="chart" width="500" height="300"></svg>
+    </div>
     
+
+
     <script>
         var w = 500;  // Width of the SVG element
         var h = 300;  // Height of the SVG element
-        var barPadding = 5;
 
-        // Updated dataset to match the screenshot
-        var dataset = [14, 18, 10, 6, 13, 5, 8, 20, 16, 9]; 
-
-        var xScale = d3.scaleBand()
-                        .domain(d3.range(dataset.length))
-                        .rangeRound([0,w])
-                        .paddingInner(0.05);
-
-        // Create a scaling function to map the dataset values to the available SVG height
-        var yScale = d3.scaleLinear()
-                       .domain([0, d3.max(dataset)])  // Input range
-                       .rangeRound([0, h]); // Output range
+        // Initial dataset
+        var dataset = generateRandomData(10);
 
         // Create the SVG element
-        var svg = d3.select("body")
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h);
+        var svg = d3.select("#chart");
 
-        // Create the bars
-        svg.selectAll("rect")
-            .data(dataset)
-            .enter()
-            .append("rect")
-            .attr("x", function(d, i) {
-                return i * (w / dataset.length);  // Calculate the x position of each bar
-            })
-            .attr("y", function(d) {
-                return h - yScale(d);  // Calculate the y position of each bar, adjusting for height
-            })
-            .attr("width", w / dataset.length - barPadding)  // Width of each bar
-            .attr("height", function(d) {
-                return yScale(d);  // Height of each bar based on the scaled value
-            })
-            .attr("fill", "steelblue");
+        // Function to create/update the bar chart
+        function drawChart(data) {
+            // Set up scales
+            var xScale = d3.scaleBand()
+                .domain(d3.range(data.length))
+                .rangeRound([0, w])
+                .paddingInner(0.05);
+            
+            var yScale = d3.scaleLinear()
+                .domain([0, d3.max(data)])
+                .range([h, 0]); // Invert for y-axis
 
-        // Add numbers above the bars
-        svg.selectAll("text")
-            .data(dataset)
-            .enter()
-            .append("text")
-            .text(function(d) {
-                return d;  // The number to display (dataset value)
-            })
-            .attr("x", function(d, i) {
-                return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;  // Center the text
-            })
-            .attr("y", function(d) {
-                return h - yScale(d) - 5;  // Position the text above the bar with a little padding
-            })
-            .attr("text-anchor", "middle")  // Center the text horizontally
-            .attr("fill", "black")  // Set text color
-            .style("font-size", "12px");  // Set font size
+            // Bind data to rects
+            var bars = svg.selectAll("rect")
+                .data(data);
+
+            // Enter selection
+            bars.enter()
+                .append("rect")
+                .attr("fill", "steelblue")
+                .merge(bars)  // Merge with update selection
+                .transition() // Add transition for smoother updates
+                .duration(500)
+                .attr("x", (d, i) => xScale(i))
+                .attr("y", d => yScale(d))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => h - yScale(d));
+
+            // Exit selection
+            bars.exit().remove();
+
+            // Add numbers above the bars
+            var labels = svg.selectAll("text")
+                .data(data);
+
+            labels.enter()
+                .append("text")
+                .merge(labels)
+                .transition()
+                .duration(500)
+                .text(d => d)
+                .attr("x", (d, i) => xScale(i) + xScale.bandwidth() / 2)
+                .attr("y", d => yScale(d) - 5)
+                .attr("text-anchor", "middle")
+                .attr("fill", "black")
+                .style("font-size", "12px");
+
+            labels.exit().remove();
+        }
+
+        // Function to generate random data
+        function generateRandomData(num) {
+            var maxValue = 25; // Max random value
+            return Array.from({length: num}, () => Math.floor(Math.random() * maxValue));
+        }
+
+        // Initial draw
+        drawChart(dataset);
+
+        // Update data on button click
+        d3.select("#update").on("click", function() {
+            dataset = generateRandomData(10); // Generate new random dataset
+            drawChart(dataset); // Redraw chart with new data
+        });
 
         // Footer style
         d3.select("body")
