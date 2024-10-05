@@ -1,104 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="Data Visualisation" />
-    <meta name="keywords" content="HTML, CSS, D3" />
-    <meta name="author" content="Ivan" />
 
-    <title>Main Page</title>
+<meta charset="UTF-8" />
+<meta name="description" content="Data Visualisation" />
+<meta name="keywords" content="HTML, CSS, D3" />
+<meta name="author" content="Ivan" />
 
-    <style>
-        /* General reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<title>Main Page</title>
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            padding: 20px;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #F5F5FA;
+        color: #333;
+    }
 
-        /* Navigation bar style */
-        .navbar {
-            background-color: #333;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+    }
 
-        .navbar a {
-            float: left;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
+    .navbar a {
+        text-decoration: none;
+        color: #6C6CFF;
+        font-weight: 600;
+        margin: 0 15px;
+    }
 
-        .navbar a:hover {
-            background-color: #ddd;
-            color: black;
-        }
+    .hero {
+        text-align: center;
+        padding: 100px 20px;
+        background-color: #FBFBFE;
+        position: relative;
 
-        .navbar a.active {
-            background-color: #4CAF50;
-            color: white;
-        }
-       
-        /* Container and link styling */
-        .container {
-            width: 80%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
+    }
 
-        .container h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .hero h1 {
+        font-size: 3em;
+        line-height: 1.2;
+        color: #333;
+    }
 
-        /* Footer styling */
-        footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #6c757d;
-        }
-    </style>
-</head>
+    .hero p {
+        margin-top: 10px;
+        font-size: 1.2em;
+        color: #555;
+    }
+
+    /* Footer styling */
+    footer {
+        margin-top: 40px;
+        text-align: center;
+        color: #777;
+        font-size: 0.9em;
+    }
+
+
+</style>
 
 <body>
 
-    <!-- Navigation Bar -->
-    <div class="navbar">
-        <a class="active" href="index.html">Home</a>
-        <a href="../COS30045 1.1 Resources/Lab 1/Lab1.1.html">Lab 1.1</a>
-        <a href="../COS30045 1.1 Resources/Lab 1/Lab1.2.html">Lab 1.2</a>
-        <a href="../COS30045 1.1 Resources/Lab 1/Lab1.3.html">Lab 1.3</a>
-        <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab2.1.html">Lab 2.1</a>
-        <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab2.2.html">Lab 2.2</a>
-        <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab2.3.html">Lab 2.3</a>
-        <a href="http://127.0.0.1:5500/Lab3.1.html">Lab 3.1</a>
-        <a href="http://127.0.0.1:5500/Lab3.2.html">Lab 3.2</a>
-    </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="#">Ivan</a>
+        </div>
+        <div class="nav-links">
+            <a class="active" href="index.html">Home</a>
+            <a href="../COS30045 1.1 Resources/Lab 1/Lab1.1.html">Lab 1.1</a>
+            <a href="../COS30045 1.1 Resources/Lab 1/Lab1.2.html">Lab 1.2</a>
+            <a href="../COS30045 1.1 Resources/Lab 1/Lab1.3.html">Lab 1.3</a>
+            <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab2.1.html">Lab 2.1</a>
+            <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab2.2.html">Lab 2.2</a>
+            <a href="http://127.0.0.1:5500/COS30045%201.1%20Resources/Lab2.3.html">Lab 2.3</a>
+            <a href="http://127.0.0.1:5500/Lab3.1.html">Lab 3.1</a>
+            <a href="http://127.0.0.1:5500/Lab3.2.html">Lab 3.2</a>
+        </div>
+    </nav>
 
+   <!-- Hero Section -->
+   <section class="hero">
+        <h1>This is my lab</h1>
+        <p>Welcome to my lab, please choose which lab you want</p>
 
-    <!-- Main content container -->
-    <div class="container">
-        <h1>Data Visualisation Labs</h1>
-        <p>Design ongoing!!!!!!</p>
-        <p>coming soon!!!!!!</p>
-        <p>please wait!!!!</p>
+        <div class="cta-buttons">
+            <a href="#" class="btn">Start Cure</a>
+            <a href="#" class="btn btn-secondary">Watch Review</a>
+        </div>
 
-    </div>
+        <!-- Profile Images -->
+        <div class="profile-section">
+            <img src="https://via.placeholder.com/60" alt="Profile 1">
+            <img src="https://via.placeholder.com/60" alt="Profile 2">
+            <img src="https://via.placeholder.com/60" alt="Profile 3">
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer>
