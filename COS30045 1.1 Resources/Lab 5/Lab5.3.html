@@ -27,6 +27,24 @@
         button {
             margin-right: 10px;
         }
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            background-color: #FBFBFE;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            line-height: 1.2;
+            color: #333;
+        }
+
+        .hero p {
+            margin-top: 10px;
+            font-size: 1.2em;
+            color: #555;
+        }
     </style>
 </head>
 
@@ -78,6 +96,7 @@
             <a href="#">Ivan</a>
         </div>
     </nav>
+<section class="hero" style="background-color: rgb(212, 233, 250);">
     <div class="title">
         <h1 style="font-family: 'Times New Roman', Times, serif;">Add and Remove Data</h1>
         <button id="add" style="background-color: lightblue; border-radius: 5px; padding: 3px;">Add Data</button>
@@ -87,6 +106,7 @@
     <div>
         <svg id="chart" width="500" height="300"></svg>
     </div>
+</section>
 
     <script>
         var w = 500;  // Width of the SVG element
