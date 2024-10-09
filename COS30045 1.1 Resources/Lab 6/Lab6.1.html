@@ -7,8 +7,9 @@
     <meta name="keywords" content="HTML, CSS, D3" />
     <meta name="author" content="Ivan" />
 
-    <title>Task 5.2 D3 Transitions</title>
+    <title>Lab 6.1 D3 Interactivity - Mouse Over Effects</title>
     <link rel="stylesheet" href="../css/style.css">
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
@@ -19,12 +20,21 @@
             font: 10px sans-serif;
         }
 
-        .title{
+        .title {
             padding: 20px;
         }
 
         button {
             margin-right: 10px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: #f9f9f9;
+            border: 1px solid #d3d3d3;
+            padding: 5px;
+            font-size: 12px;
+            visibility: hidden;
         }
         .hero {
             text-align: center;
@@ -48,8 +58,8 @@
 </head>
 
 <body>
-        <!-- Navigation -->
-        <nav class="navbar">
+           <!-- Navigation -->
+           <nav class="navbar">
             <div class="logo">
                 <a href="#">Ivan</a>
             </div>
@@ -95,19 +105,19 @@
                 <a href="#">Ivan</a>
             </div>
         </nav>
-<section class="hero" style="background-color: rgb(212, 233, 250);">
-    <div class="title">
-        <h1 style="font-family: 'Times New Roman', Times, serif;">Update and Transitions</h1>
-        <button id="update" style="background-color: lightblue; border-radius: 5px; padding: 3px;">Update Data</button>
-        <button id="elastic" style="background-color: lightgreen; border-radius: 5px; padding: 3px;">Elastic Transition</button>
-        <button id="circle" style="background-color: lightcoral; border-radius: 5px; padding: 3px;">Circle Transition</button>
-    </div>
+    <section class="hero" style="background-color: rgb(212, 233, 250);">
+        <div class="title">
+            <h1 style="font-family: 'Times New Roman', Times, serif;">Add and Remove Data with Mouseover Effects</h1>
+            <button id="add" style="background-color: lightblue; border-radius: 5px; padding: 3px;">Add Data</button>
+            <button id="remove" style="background-color: lightcoral; border-radius: 5px; padding: 3px;">Remove Data</button>
+        </div>
 
-    <div>
-        <svg id="chart" width="500" height="300"></svg>
-    </div>
-</section>
+        <div>
+            <svg id="chart" width="500" height="300"></svg>
+        </div>
 
+        <div class="tooltip" id="tooltip"></div>
+    </section>
     <script>
         var w = 500;  // Width of the SVG element
         var h = 300;  // Height of the SVG element
@@ -118,7 +128,8 @@
         // Create the SVG element
         var svg = d3.select("#chart");
 
-        var currentEase = d3.easeCubicInOut; // Default easing function
+        // Create tooltip
+        var tooltip = d3.select("#tooltip");
 
         // Function to create/update the bar chart
         function drawChart(data) {
@@ -129,9 +140,8 @@
                 .paddingInner(0.05);
                 
             var yScale = d3.scaleLinear()
-                .domain([0, d3.max(data) + 5]) // Add extra space equivalent to 5 units above the maximum value
-                .range([h - 30, 0]); // Increase padding at the top
-
+                .domain([0, d3.max(data) + 5])
+                .range([h - 30, 0]);
 
             // Bind data to rects
             var bars = svg.selectAll("rect")
@@ -141,18 +151,38 @@
             bars.enter()
                 .append("rect")
                 .attr("fill", "steelblue")
-                .merge(bars)  // Merge with update selection
-                .transition() // Add transition for smoother updates
-                .duration(2000) // Extend the duration to 2000ms
-                .ease(currentEase) // Use the current easing function
-                .delay((d, i) => i * 100) // Stagger the transition by index
+                .attr("x", w)
+                .attr("y", d => yScale(d))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => h - yScale(d))
+                .on("mouseover", function (event, d) {
+                    d3.select(this)
+                        .attr("fill", "orange");
+                    tooltip
+                        .style("visibility", "visible")
+                        .html("Value: " + d)
+                        .style("left", (event.pageX + 5) + "px")
+                        .style("top", (event.pageY - 20) + "px");
+                })
+                .on("mouseout", function () {
+                    d3.select(this)
+                        .attr("fill", "steelblue");
+                    tooltip.style("visibility", "hidden");
+                })
+                .merge(bars)
+                .transition()
+                .duration(1000)
                 .attr("x", (d, i) => xScale(i))
                 .attr("y", d => yScale(d))
                 .attr("width", xScale.bandwidth())
                 .attr("height", d => h - yScale(d));
 
             // Exit selection
-            bars.exit().remove();
+            bars.exit()
+                .transition()
+                .duration(1000)
+                .attr("x", w)
+                .remove();
 
             // Add numbers above the bars
             var labels = svg.selectAll("text")
@@ -160,58 +190,44 @@
 
             labels.enter()
                 .append("text")
+                .attr("x", w)
+                .attr("y", d => yScale(d) - 5)
+                .text(d => d)
                 .merge(labels)
                 .transition()
-                .duration(2000)
-                .ease(currentEase)
-                .delay((d, i) => i * 100)
-                .text(d => d)
+                .duration(1000)
                 .attr("x", (d, i) => xScale(i) + xScale.bandwidth() / 2)
                 .attr("y", d => yScale(d) - 5)
                 .attr("text-anchor", "middle")
                 .attr("fill", function(d) {
-                    return yScale(d) > (h - 20) ? "white" : "black"; // White text for high bars
+                    return yScale(d) > (h - 20) ? "white" : "black";
                 })
                 .style("font-size", "12px");
 
             labels.exit().remove();
-
         }
 
         // Function to generate random data
         function generateRandomData(num) {
             var maxValue = 25; // Max random value
-            return Array.from({length: num}, () => Math.floor(Math.random() * maxValue));
+            return Array.from({ length: num }, () => Math.floor(Math.random() * maxValue));
         }
 
         // Initial draw
         drawChart(dataset);
 
-        // Update data on button click
-        d3.select("#update").on("click", function() {
-            dataset = generateRandomData(10); // Generate new random dataset
-            drawChart(dataset); // Redraw chart with new data
+        // Add data on button click
+        d3.select("#add").on("click", function() {
+            var newValue = Math.floor(Math.random() * 25); // Generate a new random value
+            dataset.push(newValue); // Add new value to the dataset
+            drawChart(dataset); // Redraw chart with updated data
         });
 
-        // Elastic transition button
-        d3.select("#elastic").on("click", function() {
-            currentEase = d3.easeElasticOut;
-            dataset = generateRandomData(10);
-            drawChart(dataset);
+        // Remove data on button click
+        d3.select("#remove").on("click", function() {
+            dataset.shift(); // Remove the first value from the dataset
+            drawChart(dataset); // Redraw chart with updated data
         });
-
-        // Circle transition button
-        d3.select("#circle").on("click", function() {
-            currentEase = d3.easeCircleIn;
-            dataset = generateRandomData(10);
-            drawChart(dataset);
-        });
-
-        // Footer style
-        d3.select("body")
-            .append("footer")
-            .style("color", "grey")
-            .html("COS30045 Data Visualisation<br>Joe Bloggs");
     </script>
 
 </body>

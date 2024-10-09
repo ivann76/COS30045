@@ -1,30 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Data Visualisation" />
     <meta name="keywords" content="HTML, CSS, D3" />
     <meta name="author" content="Ivan" />
-
-    <title>Task 5.2 D3 Transitions</title>
+    <title>Lab 6.2 D3 Interactivity - Sort</title>
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
         }
-
         .axis {
             font: 10px sans-serif;
         }
-
-        .title{
+        .title {
             padding: 20px;
         }
-
         button {
             margin-right: 10px;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: #f9f9f9;
+            border: 1px solid #d3d3d3;
+            padding: 5px;
+            font-size: 12px;
+            visibility: hidden;
         }
         .hero {
             text-align: center;
@@ -46,10 +49,9 @@
         }
     </style>
 </head>
-
 <body>
-        <!-- Navigation -->
-        <nav class="navbar">
+           <!-- Navigation -->
+           <nav class="navbar">
             <div class="logo">
                 <a href="#">Ivan</a>
             </div>
@@ -95,22 +97,24 @@
                 <a href="#">Ivan</a>
             </div>
         </nav>
-<section class="hero" style="background-color: rgb(212, 233, 250);">
-    <div class="title">
-        <h1 style="font-family: 'Times New Roman', Times, serif;">Update and Transitions</h1>
-        <button id="update" style="background-color: lightblue; border-radius: 5px; padding: 3px;">Update Data</button>
-        <button id="elastic" style="background-color: lightgreen; border-radius: 5px; padding: 3px;">Elastic Transition</button>
-        <button id="circle" style="background-color: lightcoral; border-radius: 5px; padding: 3px;">Circle Transition</button>
-    </div>
+    <section class="hero" style="background-color: rgb(212, 233, 250);">
+        <div class="title">
+            <h1 style="font-family: 'Times New Roman', Times, serif;">Interactive Data Visualization</h1>
+            <button id="add" style="background-color: lightblue; border-radius: 5px; padding: 3px;">Add Data</button>
+            <button id="remove" style="background-color: lightcoral; border-radius: 5px; padding: 3px;">Remove Data</button>
+            <button id="sort" style="background-color: lightgrey; border-radius: 5px; padding: 3px;">Sort Data</button>
+        </div>
 
-    <div>
-        <svg id="chart" width="500" height="300"></svg>
-    </div>
-</section>
+        <div>
+            <svg id="chart" width="500" height="300"></svg>
+        </div>
 
+        <div class="tooltip" id="tooltip"></div>
+    </section>
     <script>
         var w = 500;  // Width of the SVG element
         var h = 300;  // Height of the SVG element
+        var sortOrder = false; // false for ascending, true for descending
 
         // Initial dataset
         var dataset = generateRandomData(10);
@@ -118,102 +122,83 @@
         // Create the SVG element
         var svg = d3.select("#chart");
 
-        var currentEase = d3.easeCubicInOut; // Default easing function
+        // Create tooltip
+        var tooltip = d3.select("#tooltip");
 
         // Function to create/update the bar chart
-        function drawChart(data) {
-            // Set up scales
+        function drawChart(data, sort = false) {
+            if (sort) {
+                data.sort((a, b) => sortOrder ? d3.descending(a, b) : d3.ascending(a, b));
+                sortOrder = !sortOrder; // Toggle the sort order
+            }
+
             var xScale = d3.scaleBand()
                 .domain(d3.range(data.length))
                 .rangeRound([0, w])
                 .paddingInner(0.05);
                 
             var yScale = d3.scaleLinear()
-                .domain([0, d3.max(data) + 5]) // Add extra space equivalent to 5 units above the maximum value
-                .range([h - 30, 0]); // Increase padding at the top
+                .domain([0, d3.max(data)])
+                .range([h, 0]);
 
-
-            // Bind data to rects
-            var bars = svg.selectAll("rect")
+            var update = svg.selectAll("rect")
                 .data(data);
 
-            // Enter selection
-            bars.enter()
+            update.enter()
                 .append("rect")
-                .attr("fill", "steelblue")
-                .merge(bars)  // Merge with update selection
-                .transition() // Add transition for smoother updates
-                .duration(2000) // Extend the duration to 2000ms
-                .ease(currentEase) // Use the current easing function
-                .delay((d, i) => i * 100) // Stagger the transition by index
+                .merge(update)
+                .on("mouseover", function (event, d) {
+                    d3.select(this).attr("fill", "orange");
+                    tooltip.style("visibility", "visible").html("Value: " + d)
+                           .style("left", (event.pageX + 5) + "px")
+                           .style("top", (event.pageY - 20) + "px");
+                })
+                .on("mouseout", function () {
+                    d3.select(this).attr("fill", "steelblue");
+                    tooltip.style("visibility", "hidden");
+                })
+                .transition()
+                .duration(1000)
                 .attr("x", (d, i) => xScale(i))
                 .attr("y", d => yScale(d))
                 .attr("width", xScale.bandwidth())
                 .attr("height", d => h - yScale(d));
 
-            // Exit selection
-            bars.exit().remove();
+            update.exit().remove();
 
-            // Add numbers above the bars
-            var labels = svg.selectAll("text")
-                .data(data);
-
-            labels.enter()
+            var labelUpdate = svg.selectAll("text").data(data);
+            labelUpdate.enter()
                 .append("text")
-                .merge(labels)
+                .merge(labelUpdate)
                 .transition()
-                .duration(2000)
-                .ease(currentEase)
-                .delay((d, i) => i * 100)
-                .text(d => d)
+                .duration(1000)
                 .attr("x", (d, i) => xScale(i) + xScale.bandwidth() / 2)
                 .attr("y", d => yScale(d) - 5)
-                .attr("text-anchor", "middle")
-                .attr("fill", function(d) {
-                    return yScale(d) > (h - 20) ? "white" : "black"; // White text for high bars
-                })
-                .style("font-size", "12px");
+                .text(d => d);
 
-            labels.exit().remove();
-
+            labelUpdate.exit().remove();
         }
 
-        // Function to generate random data
-        function generateRandomData(num) {
-            var maxValue = 25; // Max random value
-            return Array.from({length: num}, () => Math.floor(Math.random() * maxValue));
-        }
+        // Event listeners for buttons
+        d3.select("#add").on("click", () => {
+            dataset.push(Math.floor(Math.random() * 25));
+            drawChart(dataset);
+        });
+
+        d3.select("#remove").on("click", () => {
+            dataset.shift();
+            drawChart(dataset);
+        });
+
+        d3.select("#sort").on("click", () => drawChart(dataset, true));
 
         // Initial draw
         drawChart(dataset);
 
-        // Update data on button click
-        d3.select("#update").on("click", function() {
-            dataset = generateRandomData(10); // Generate new random dataset
-            drawChart(dataset); // Redraw chart with new data
-        });
-
-        // Elastic transition button
-        d3.select("#elastic").on("click", function() {
-            currentEase = d3.easeElasticOut;
-            dataset = generateRandomData(10);
-            drawChart(dataset);
-        });
-
-        // Circle transition button
-        d3.select("#circle").on("click", function() {
-            currentEase = d3.easeCircleIn;
-            dataset = generateRandomData(10);
-            drawChart(dataset);
-        });
-
-        // Footer style
-        d3.select("body")
-            .append("footer")
-            .style("color", "grey")
-            .html("COS30045 Data Visualisation<br>Joe Bloggs");
+        // Function to generate random data
+        function generateRandomData(num) {
+            return d3.range(num).map(() => Math.floor(Math.random() * 25));
+        }
     </script>
-
 </body>
-
 </html>
