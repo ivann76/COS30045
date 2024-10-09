@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Data Visualisation">
+    <meta name="keywords" content="HTML, CSS, D3">
+    <meta name="author" content="Ivan">
+    <title>LAB 7.2 D3 Pie Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2;
+        }
+        .area {
+            fill: lightsteelblue;
+        }
+    </style>
+</head>
+<body>
+    <h1>Number of Unemployed in Australia</h1>
+    <svg id="chart" width="300" height="300"></svg>
+    <script>
+
+        // Create SVG element
+        var svg = d3.select("#chart").append("svg")
+            .attr("width", w + margin.left + margin.right)
+            .attr("height", h + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // Load the CSV data
+        d3.csv("../Unemployment_78-95.csv", function(d) {
+            return {
+                date: new Date(+d.year, +d.month - 1),  // create a new Date object from year and month
+                number: +d.number  // convert unemployment number to integer
+            };
+        }).then(function(data) {
+            // Set the ranges
+            var x = d3.scaleTime().range([0, w]);
+            var y = d3.scaleLinear().range([h, 0]);
+
+            // Define the axes
+            var xAxis = d3.axisBottom(x).ticks(5);
+            var yAxis = d3.axisLeft(y).ticks(5);
+
+            // Scale the domain
+            x.domain(d3.extent(data, function(d) { return d.date; }));
+            y.domain([0, d3.max(data, function(d) { return d.number; })]);
+
+            // Define the line generator
+            var valueline = d3.line()
+                .x(function(d) { return x(d.date); })  // X is the date
+                .y(function(d) { return y(d.number); });  // Y is the unemployment number
+
+            // Define the area generator
+            var area = d3.area()
+                .x(function(d) { return x(d.date); })
+                .y0(y(0))
+                .y1(function(d) { return y(d.number); });
+
+            // Add the valueline path (Line Chart)
+            svg.append("path")
+                .data([data])
+                .attr("class", "line")
+                .attr("d", valueline);
+
+            // Add the area path (Area Chart)
+            svg.append("path")
+                .data([data])
+                .attr("class", "area")
+                .attr("d", area);
+
+            // Add the X Axis
+            svg.append("g")
+                .attr("transform", "translate(0," + h + ")")
+                .call(xAxis);
+
+            // Add the Y Axis
+            svg.append("g")
+                .call(yAxis);
+
+            svg.append("line")
+                .attr("class", "line halfMilMark")
+                .attr("x1", 0)
+                .attr("y1", y(500000))
+                .attr("x2", w)
+                .attr("y2", y(500000));
+
+            svg.append("text")
+                .attr("class", "halfMilLabel")
+                .attr("x", 10)
+                .attr("y", y(500000) - 5)
+                .text("Half a million unemployed");
+        });
+
+        // Footer style
+        d3.select("body").append("footer").style("color", "grey").html("COS30045 Data Visualisation<br>Joe Bloggs");
+    </script>
+</body>
+</html>
