@@ -8,26 +8,31 @@
     <meta name="author" content="Ivan" />
 
     <title>Task 5.1 D3 Updates</title>
-
     <link rel="stylesheet" href="../css/style.css">
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
         }
+
         .axis {
             font: 10px sans-serif;
         }
 
-        .title{
+        .title {
             padding: 20px;
+        }
+
+        button {
+            margin-right: 10px;
         }
     </style>
 </head>
 
 <body>
-       <!-- Navigation -->
-       <nav class="navbar">
+      <!-- Navigation -->
+      <nav class="navbar">
         <div class="logo">
             <a href="#">Ivan</a>
         </div>
@@ -73,16 +78,16 @@
             <a href="#">Ivan</a>
         </div>
     </nav>
-
     <div class="title">
-        <h1 style="font-family: 'Times New Roman', Times, serif;">Update Data</h1>
-        <button id="update" style="background-color: lightblue; border-radius: 5px; padding: 3px;">Update Data</button>
+        <h1 style="font-family: 'Times New Roman', Times, serif;">Add and Remove Data</h1>
+        <button id="add" style="background-color: lightblue; border-radius: 5px; padding: 3px;">Add Data</button>
+        <button id="remove" style="background-color: lightcoral; border-radius: 5px; padding: 3px;">Remove Data</button>
     </div>
 
     <div>
         <svg id="chart" width="500" height="300"></svg>
     </div>
-    
+
     <script>
         var w = 500;  // Width of the SVG element
         var h = 300;  // Height of the SVG element
@@ -114,16 +119,24 @@
             bars.enter()
                 .append("rect")
                 .attr("fill", "steelblue")
+                .attr("x", w) // Start from the right edge for new bars
+                .attr("y", d => yScale(d))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => h - yScale(d))
                 .merge(bars)  // Merge with update selection
                 .transition() // Add transition for smoother updates
-                .duration(500)
+                .duration(1000)
                 .attr("x", (d, i) => xScale(i))
                 .attr("y", d => yScale(d))
                 .attr("width", xScale.bandwidth())
                 .attr("height", d => h - yScale(d));
 
             // Exit selection
-            bars.exit().remove();
+            bars.exit()
+                .transition()
+                .duration(1000)
+                .attr("x", w) // Transition to move bars out to the right
+                .remove();
 
             // Add numbers above the bars
             var labels = svg.selectAll("text")
@@ -131,10 +144,12 @@
 
             labels.enter()
                 .append("text")
+                .attr("x", w) // Start from the right edge for new labels
+                .attr("y", d => yScale(d) - 5)
+                .text(d => d)
                 .merge(labels)
                 .transition()
-                .duration(500)
-                .text(d => d)
+                .duration(1000)
                 .attr("x", (d, i) => xScale(i) + xScale.bandwidth() / 2)
                 .attr("y", d => yScale(d) - 5)
                 .attr("text-anchor", "middle")
@@ -150,16 +165,23 @@
         // Function to generate random data
         function generateRandomData(num) {
             var maxValue = 25; // Max random value
-            return Array.from({length: num}, () => Math.floor(Math.random() * maxValue));
+            return Array.from({ length: num }, () => Math.floor(Math.random() * maxValue));
         }
 
         // Initial draw
         drawChart(dataset);
 
-        // Update data on button click
-        d3.select("#update").on("click", function() {
-            dataset = generateRandomData(10); // Generate new random dataset
-            drawChart(dataset); // Redraw chart with new data
+        // Add data on button click
+        d3.select("#add").on("click", function() {
+            var newValue = Math.floor(Math.random() * 25); // Generate a new random value
+            dataset.push(newValue); // Add new value to the dataset
+            drawChart(dataset); // Redraw chart with updated data
+        });
+
+        // Remove data on button click
+        d3.select("#remove").on("click", function() {
+            dataset.shift(); // Remove the first value from the dataset
+            drawChart(dataset); // Redraw chart with updated data
         });
 
         // Footer style
