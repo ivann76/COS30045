@@ -14,6 +14,7 @@
         body {
             font-family: Arial, sans-serif;
         }
+
         .axis {
             font: 10px sans-serif;
         }
@@ -21,13 +22,19 @@
         .title{
             padding: 20px;
         }
+
+        button {
+            margin-right: 10px;
+        }
     </style>
 </head>
 
 <body>
     <div class="title">
-        <h1 style="font-family: 'Times New Roman', Times, serif;">Update Data</h1>
+        <h1 style="font-family: 'Times New Roman', Times, serif;">Update and Transitions</h1>
         <button id="update" style="background-color: lightblue; border-radius: 5px; padding: 3px;">Update Data</button>
+        <button id="elastic" style="background-color: lightgreen; border-radius: 5px; padding: 3px;">Elastic Transition</button>
+        <button id="circle" style="background-color: lightcoral; border-radius: 5px; padding: 3px;">Circle Transition</button>
     </div>
 
     <div>
@@ -43,6 +50,8 @@
 
         // Create the SVG element
         var svg = d3.select("#chart");
+
+        var currentEase = d3.easeCubicInOut; // Default easing function
 
         // Function to create/update the bar chart
         function drawChart(data) {
@@ -67,7 +76,9 @@
                 .attr("fill", "steelblue")
                 .merge(bars)  // Merge with update selection
                 .transition() // Add transition for smoother updates
-                .duration(500)
+                .duration(2000) // Extend the duration to 2000ms
+                .ease(currentEase) // Use the current easing function
+                .delay((d, i) => i * 100) // Stagger the transition by index
                 .attr("x", (d, i) => xScale(i))
                 .attr("y", d => yScale(d))
                 .attr("width", xScale.bandwidth())
@@ -84,7 +95,9 @@
                 .append("text")
                 .merge(labels)
                 .transition()
-                .duration(500)
+                .duration(2000)
+                .ease(currentEase)
+                .delay((d, i) => i * 100)
                 .text(d => d)
                 .attr("x", (d, i) => xScale(i) + xScale.bandwidth() / 2)
                 .attr("y", d => yScale(d) - 5)
@@ -111,6 +124,20 @@
         d3.select("#update").on("click", function() {
             dataset = generateRandomData(10); // Generate new random dataset
             drawChart(dataset); // Redraw chart with new data
+        });
+
+        // Elastic transition button
+        d3.select("#elastic").on("click", function() {
+            currentEase = d3.easeElasticOut;
+            dataset = generateRandomData(10);
+            drawChart(dataset);
+        });
+
+        // Circle transition button
+        d3.select("#circle").on("click", function() {
+            currentEase = d3.easeCircleIn;
+            dataset = generateRandomData(10);
+            drawChart(dataset);
         });
 
         // Footer style
