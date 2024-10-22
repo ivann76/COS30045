@@ -27,8 +27,8 @@
         const width = 600;
         const height = 600;
 
-        // Create an SVG container
-        const svg = d3.select("body")
+        // Select the actual SVG element by ID, not the body
+        const svg = d3.select("#map")
             .attr("width", width)
             .attr("height", height);
 
@@ -47,10 +47,10 @@
             svg.selectAll("path")
                 .data(json.features)
                 .enter()
-                .attr("path")
-                .attr("d", path);
+                .append("path")  // Append path elements
+                .attr("class", "lga-boundary")
+                .attr("d", path);  // Use the path generator to create the "d" attribute
 
-            // Optionally, add labels or other elements as needed
         }).catch(function(error) {
             console.log("Error loading the GeoJSON file:", error);
         });
