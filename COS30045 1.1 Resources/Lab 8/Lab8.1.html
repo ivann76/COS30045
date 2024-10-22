@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Geomapping with D3">
+    <meta name="keywords" content="HTML, CSS, D3, GeoJSON">
+    <meta name="author" content="Ivan">
+    <title>Victoria LGAs Geomap</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .lga-boundary {
+            fill: none;
+            stroke: #000;
+            stroke-width: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Victoria Local Government Areas (LGA) Map</h1>
+    <svg id="map" width="600" height="600"></svg>
+
+    <script>
+        // Define the dimensions of the SVG
+        const width = 600;
+        const height = 600;
+
+        // Create an SVG container
+        const svg = d3.select("body")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Define a projection (Mercator) and center it on Victoria, Australia
+        const projection = d3.geoMercator()
+            .center([145, -37])  // Center on Victoria (longitude, latitude)
+            .translate([width / 2, height / 2])  // Center the map within the SVG
+            .scale(3000);  // Scale for zoom
+
+        // Define a path generator using the projection
+        const path = d3.geoPath().projection(projection);
+
+        // Load the GeoJSON data for Victoria's LGAs
+        d3.json("LGA_VIC.json").then(function(json) {
+            // Bind data and create one path per GeoJSON feature
+            svg.selectAll("path")
+                .data(json.features)
+                .enter()
+                .attr("path")
+                .attr("d", path);
+
+            // Optionally, add labels or other elements as needed
+        }).catch(function(error) {
+            console.log("Error loading the GeoJSON file:", error);
+        });
+    </script>
+</body>
+</html>
