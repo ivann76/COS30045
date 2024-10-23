@@ -14,11 +14,21 @@
         .bar rect {
             stroke: #fff;
         }
+        .legend {
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+        }
+        .legend rect {
+            stroke-width: 2;
+            stroke: white;
+        }
     </style>
 </head>
 <body>
     <h1>D3 Stacked Bar Chart</h1>
     <svg id="chart" width="300" height="300"></svg>
+      <!-- SVG container for the legend -->
+      <svg id="legend" width="300" height="50"></svg>
     <script src="Lab7.3.js"></script>
 </body>
 </html>
