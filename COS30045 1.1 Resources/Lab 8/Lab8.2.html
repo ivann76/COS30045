@@ -23,13 +23,28 @@
             fill: black;
             text-anchor: middle;
         }
+        /* Tooltip styling */
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 5px;
+            font-size: 12px;
+            background: lightsteelblue;
+            border: 1px solid #333;
+            border-radius: 5px;
+            pointer-events: none; /* Prevents flickering */
+            opacity: 0; /* Initially invisible */
+        }
     </style>
 </head>
 <body>
     <h1>Victorian Number Unemployed by LGA</h1>
-    
+
     <!-- SVG container for the map -->
     <svg id="map" width="600" height="600"></svg>
+
+    <!-- Tooltip container -->
+    <div id="tooltip" class="tooltip"></div>
 
     <!-- Optional: Add a legend -->
     <div id="legend" class="legend"></div>
