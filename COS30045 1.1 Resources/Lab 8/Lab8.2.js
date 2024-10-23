@@ -18,12 +18,13 @@ d3.csv("VIC_LGA_unemployment.csv").then(function(data) {
     d3.json("LGA_VIC.json").then(function(json) {
         // Merge the CSV data with the GeoJSON data
         for (var i = 0; i < data.length; i++) {
-            var csvLGA = data[i].LGA_name;
+            var csvLGA = data[i].LGA;
             var unemployed = +data[i].unemployed;
 
             // Find the matching LGA in the GeoJSON and add the unemployment value
             for (var j = 0; j < json.features.length; j++) {
                 var jsonLGA = json.features[j].properties.LGA_name.trim();
+                console.log(csvLGA)
                 if (csvLGA === jsonLGA) {
                     json.features[j].properties.unemployed = unemployed;
                     break;
