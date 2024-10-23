@@ -15,13 +15,24 @@
             stroke: #fff;
             stroke-width: 0.5;
         }
-  
+        .legend {
+            font-size: 12px;
+        }
+        .city-label {
+            font-size: 10px;
+            fill: black;
+            text-anchor: middle;
+        }
     </style>
 </head>
 <body>
-    <h1>Victoria Number Unemployed by LGA</h1>
+    <h1>Victorian Number Unemployed by LGA</h1>
+    
+    <!-- SVG container for the map -->
     <svg id="map" width="600" height="600"></svg>
-   
+
+    <!-- Optional: Add a legend -->
+    <div id="legend" class="legend"></div>
 
     <script src="Lab8.2.js"></script>
 </body>
